@@ -40,20 +40,6 @@ public class Search {
 		return node;
 	}
 	
-	public ArrayList<Node> Expand(Node node, Deque<Node> frontier, 
-			ArrayList<Node> explored) {
-		ArrayList<Node> nextStates = getNextStates(node);
-		ArrayList<Node> successors = new ArrayList<Node>();
-		for(int i = 0; i < nextStates.size(); i++) {
-			if (!explored.contains(nextStates.get(i)) &&
-					!frontier.contains(nextStates.get(i))) {
-				successors.add(nextStates.get(i));
-			}
-		}
-		
-		return successors;
-	}
-	
 	public ArrayList<Node> getNextStates(Node node) {
 		int x = node.getX();
 		int y = node.getY();
@@ -61,10 +47,6 @@ public class Search {
 		if(isValidChild(x - 1, y)) {
 			nextStates.add(new Node(x - 1, y));
 	    }
-	        
-        if(isValidChild(x + 1, y)) {
-        	nextStates.add(new Node(x + 1, y));
-        }
         
         if(isValidChild(x, y - 1)) {
         	nextStates.add(new Node(x, y - 1));
@@ -72,6 +54,10 @@ public class Search {
         
         if(isValidChild(x, y + 1)) {
         	nextStates.add(new Node(x, y + 1));
+        }
+        
+        if(isValidChild(x + 1, y)) {
+        	nextStates.add(new Node(x + 1, y));
         }
 		
 		return nextStates;
