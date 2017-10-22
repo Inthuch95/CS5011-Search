@@ -8,43 +8,16 @@ import search.Search;
 public class Search1 {
 
 	public static void main(String[] args) {
-		Search searchAlg;
-		char[][] map = getChosenMap(args[1]);
-		if (args[0].equals("B")) {
+		char[][] map = Map.getChosenMap(args[1]);
+		Search searchAlg = new Search(map);
+		if (args[0].equals("BFS")) {
 			searchAlg = new BFS(map);
-		} else {
+		} else if (args[0].equals("DFS")) {
 			searchAlg = new DFS(map);
+		} else{
+			System.out.println("Invalid search algorithm");
+			System.exit(0);
 		}
 		searchAlg.search();
 	}
-	
-	public static char[][] getChosenMap(String mapChoice) {
-		int option = Integer.parseInt(mapChoice);
-		char[][] map;
-		switch(option) {
-		case 1:
-			map = Map.map1;
-			break;
-		case 2:
-			map = Map.map2;
-			break;
-		case 3:
-			map = Map.map3;
-			break;
-		case 4:
-			map = Map.map4;
-			break;
-		case 5:
-			map = Map.map5;
-			break;
-		case 6:
-			map = Map.map6;
-			break;
-		default:
-			map = Map.map1;
-			break;
-		}
-		return map;
-	}
-
 }

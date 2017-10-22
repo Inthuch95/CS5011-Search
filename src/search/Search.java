@@ -1,6 +1,7 @@
 package search;
 
 import java.util.ArrayList;
+import java.util.Deque;
 
 import map.Node;
 
@@ -37,6 +38,20 @@ public class Search {
 		}
 		
 		return node;
+	}
+	
+	public ArrayList<Node> Expand(Node node, Deque<Node> frontier, 
+			ArrayList<Node> explored) {
+		ArrayList<Node> nextStates = getNextStates(node);
+		ArrayList<Node> successors = new ArrayList<Node>();
+		for(int i = 0; i < nextStates.size(); i++) {
+			if (!explored.contains(nextStates.get(i)) &&
+					!frontier.contains(nextStates.get(i))) {
+				successors.add(nextStates.get(i));
+			}
+		}
+		
+		return successors;
 	}
 	
 	public ArrayList<Node> getNextStates(Node node) {

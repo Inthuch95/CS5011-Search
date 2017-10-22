@@ -80,4 +80,34 @@ public class Map {
 		{'O', 'X', 'X', 'X', 'G', 'O', 'X', 'X', 'O', 'X'},
 		{'O', 'O', 'O', 'O', 'O', 'O', 'O', 'X', 'O', 'O'}
 		};
+		
+		public static char[][] getChosenMap(String mapChoice) {
+			int option = Integer.parseInt(mapChoice);
+			char[][] map = map1;
+			switch(option) {
+			case 1:
+				map = map1;
+				break;
+			case 2:
+				map = map2;
+				break;
+			case 3:
+				map = map3;
+				break;
+			case 4:
+				map = map4;
+				break;
+			case 5:
+				map = map5;
+				break;
+			case 6:
+				map = map6;
+				break;
+			default:
+				System.out.println("Invalid map option");
+				System.exit(0);
+				break;
+			}
+			return map;
+		}
 }
