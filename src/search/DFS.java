@@ -46,7 +46,7 @@ public class DFS extends Search {
 				statesExplored += 1;
 				System.out.println("");
 				System.out.println("Found Bob");
-				System.out.println("Path: " + directions);
+				printPath("Find Bob");
 				System.out.println("State explored: " + statesExplored + "\n");
 				// reset the states
 				initialNode = currentNode;
@@ -88,7 +88,7 @@ public class DFS extends Search {
 				statesExplored += 1;
 				System.out.println("");
 				System.out.println("Arrived at safe zone");
-				System.out.println("Path: " + directions);
+				printPath("Find safe zone");
 				System.out.println("State explored: " + statesExplored);
 				break;
 			}
@@ -118,5 +118,38 @@ public class DFS extends Search {
 		}
 		
 		return successors;
+	}
+	
+	private void printPath(String objective) {
+		System.out.println("--------------------------------------");
+		System.out.println("Depth First Search");
+		System.out.println("Objective: " + objective);
+		System.out.println("--------------------------------------");
+		String line = "";
+		Node node;
+		for(int i = 0; i < map.length; i++) {
+			for(int j = 0; j < map[i].length; j++) {
+				node = new Node(i, j);
+				if (directions.contains(node) && directions.indexOf(node) == 0) {
+					line = "I";
+				} else if (directions.contains(node) && map[i][j] == 'G' && 
+						directions.indexOf(node) == directions.size()-1) {
+					line = "G";
+				} else if (directions.contains(node) && map[i][j] == 'B' && 
+						directions.indexOf(node) == directions.size()-1) {
+					line = "B";
+				}else if (directions.contains(node)) {
+					line = Integer.toString(directions.indexOf(node));
+				}else if (!directions.contains(node) && map[i][j] == 'I') {
+					line = "O";
+				}else {
+					line = map[i][j] + " ";
+				}
+				System.out.printf("%-4s", line);
+			}
+			System.out.println("");
+			line = "";
+		}
+		System.out.println("--------------------------------------");
 	}
 }

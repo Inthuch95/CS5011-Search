@@ -1,7 +1,6 @@
 package search;
 
 import java.util.ArrayList;
-import java.util.Deque;
 
 import map.Node;
 
@@ -44,21 +43,25 @@ public class Search {
 		int x = node.getX();
 		int y = node.getY();
 		ArrayList<Node> nextStates = new ArrayList<Node>();
-		if(isValidChild(x - 1, y)) {
-			nextStates.add(new Node(x - 1, y));
-	    }
+		// up
+        if(isValidChild(x - 1, y)) {
+        	nextStates.add(new Node(x - 1, y));
+        }
         
+        // left
         if(isValidChild(x, y - 1)) {
         	nextStates.add(new Node(x, y - 1));
         }
         
+        // right
         if(isValidChild(x, y + 1)) {
         	nextStates.add(new Node(x, y + 1));
         }
         
-        if(isValidChild(x + 1, y)) {
-        	nextStates.add(new Node(x + 1, y));
-        }
+        // down
+ 		if(isValidChild(x + 1, y)) {
+ 			nextStates.add(new Node(x + 1, y));
+ 	    }
 		
 		return nextStates;
 	}
