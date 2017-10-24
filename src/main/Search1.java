@@ -20,6 +20,8 @@ public class Search1 {
 			System.out.println("Invalid search algorithm");
 			System.exit(0);
 		}
-		searchAlg.search();
+		// Search for Bob, then search for safe goal position
+		searchAlg.search('B');
+		searchAlg.search('G');
 	}
 }

@@ -5,9 +5,9 @@ import java.util.Collections;
 
 public class Node {
 	private int x, y;
-	private double heuristic, score;
+	private double heuristic, score, pathCost;
 	public Node(int x, int y) {
-		// set x and y coordinates
+		// set x and y coordinates (row, column)
 		this.x = x;
 		this.y = y;
 	}
@@ -20,12 +20,23 @@ public class Node {
 		return this.y;
 	}
 	
+	// estimated cost to goal h(n)
 	public double getHeuristic() {
 		return this.heuristic;
 	}
 	
+	// cost from initial node to current node g(n)
+	public double getPathCost() {
+		return this.pathCost;
+	}
+	
+	// score f(n) determines the order of node expansion for BestFS and A*
 	public double getScore() {
 		return this.score;
+	}
+	
+	public void setPathCost(double pathCost) {
+		this.pathCost = pathCost;
 	}
 	
 	public void setScore(double score) {
@@ -62,6 +73,7 @@ public class Node {
 	
 	@Override
 	public String toString() {
+		// print Node in the form: Node(row, column)
 		String output;
 		output = "Node(" + Integer.toString(this.x) + ", " + Integer.toString(this.y) + ")";
 		
@@ -77,7 +89,7 @@ public class Node {
 
 	    Node n2 = (Node) node;
 
-	    // Custom equality check here.
+	    // custom equality check here.
 	    return (this.x == n2.x) && (this.y == n2.y);
 	}
 }

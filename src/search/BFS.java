@@ -2,7 +2,6 @@ package search;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.Map;
 
@@ -10,117 +9,91 @@ import map.Node;
 
 public class BFS extends Search {
 	private Deque<Node> frontier = new ArrayDeque<Node>();
-	private Node initialNode;
-	private int statesExplored;
 	public BFS(char[][] map, int mapNumber) {
 		super(map, mapNumber);
-		statesExplored = 0;
-		initialNode = this.getStartNode();
 	}
 	
-	public void search() {
+	public void search(char goal) {
+		clearData();
 		char[][] map = this.getMap();
-		findBob(map);
-		findSafeZone(map);
-    }
-	
-	private void findBob(char[][] map) {
 		Map<Node, Node> prev = this.getPrev();
-		ArrayList<Node> directions =  this.getDirections();
-		ArrayList<Node> successors = this.getExplored();
+		ArrayList<Node> successors = this.getSuccessors();
 		ArrayList<Node> explored = this.getExplored();
-		System.out.println("Start node: " + initialNode + "\n");
+		Node startNode = this.getStartNode();
+		System.out.println("Start node: " + startNode + "\n");
 		// BFS uses Deque to store frontier
-		frontier.add(initialNode);
+		frontier.add(startNode);
 		Node currentNode = new Node(0, 0);
 		
-		// find Bob
+		// Perform Breadth First Search
 		while(!frontier.isEmpty()) {
+			// remove the first item from the frontier
 			currentNode = frontier.remove();
 			explored.add(currentNode);
-			System.out.println("current node: " + currentNode);
-			System.out.println("frontier: " + frontier);
-			System.out.println("explored: " + explored + "\n");
-			// check if we have found Bob or not
-			if(map[currentNode.getX()][currentNode.getY()] == 'B') {
-				// store the path that robot took
-				for(Node node = currentNode; node != null; node = prev.get(node)) {
-			        directions.add(node);
-			    }
-				Collections.reverse(directions);
-				statesExplored += 1;
-				System.out.println("");
-				System.out.println("Found Bob");
-				printPath("Find Bob", map, directions);
-				System.out.println("Path cost: " + (directions.size() - 1));
-				System.out.println("State explored: " + statesExplored + "\n");
-				// use Bob's location as initial state
-				initialNode = currentNode;
-				frontier.clear();
-				explored.clear();
-				directions.clear();
-				prev.clear();
+			printStatus(goal, currentNode, explored);
+			// check if the robot has reached the goal
+			if(map[currentNode.getX()][currentNode.getY()] == goal) {
+				this.constructPathToGoal(currentNode);
+				this.setStateExplored(this.getStatesExplored() + 1);
+				printSummary(goal);
+				// assign new initial state
+				this.setStartNode(currentNode);
 				break;
 			}
-			// get successor states and add them to the frontier
+			// expand the nodes
 			successors = Expand(currentNode, frontier, explored);
 			frontier.addAll(successors);
-			// store information about parent node
 			for(Node node : successors) {
 				prev.put(node, currentNode);
 			}
-			// check for failure
-			if (frontier.isEmpty()) {
-				System.out.println("Failed to find Bob :(");
+			checkFailure(goal);
+			// keep track of states explored
+			if (!currentNode.equals(startNode)) {
+				this.setStateExplored(this.getStatesExplored() + 1);
 			}
-			if (!currentNode.equals(initialNode)) {
-				statesExplored += 1;
-			}
+		}
+    }
+	
+	private void printSummary(char goal) {
+		// print the search summary once the robot reached the goal
+		System.out.println("");
+		if (goal == 'B') {
+			System.out.println("Found Bob");
+			printPath("Find Bob", this.getMap(), this.getDirections());
+		} else {
+			System.out.println("Arrived at safe zone");
+			printPath("Find safe zone", this.getMap(), this.getDirections());
+		}
+		System.out.println("Path cost: " + (this.getDirections().size() - 1));
+		System.out.println("State explored: " + this.getStatesExplored() + "\n");
+	}
+	
+	private void printStatus(char goal, Node currentNode, ArrayList<Node> explored) {
+		System.out.println("current node: " + currentNode);
+		System.out.println("frontier: " + frontier);
+		System.out.println("explored: " + explored + "\n");
+	}
+	
+	private void checkFailure(char goal) {
+		// if there's no more nodes to expand then the search has failed
+		if (frontier.isEmpty() && goal == 'B') {
+			System.out.println("Failed to find Bob :(");
+		} else if (frontier.isEmpty() && goal == 'G') {
+			System.out.println("Failed to get to safety");
 		}
 	}
 	
-	private void findSafeZone(char[][] map) {
+	private void clearData () {
+		// clear everything in order to prepare for new search operation
 		Map<Node, Node> prev = this.getPrev();
 		ArrayList<Node> directions =  this.getDirections();
-		ArrayList<Node> successors = this.getExplored();
+		ArrayList<Node> successors = this.getSuccessors();
 		ArrayList<Node> explored = this.getExplored();
-		this.setGoalNode('G');
-		frontier.add(initialNode);
-		Node currentNode = new Node(0, 0);
-		// get to safety
-		while(!frontier.isEmpty()) {
-			currentNode = frontier.remove();
-			explored.add(currentNode);
-			System.out.println("current node: " + currentNode);
-			System.out.println("frontier: " + frontier);
-			System.out.println("explored: " + explored + "\n");
-			// check if the robot reaches the safe zone
-			if(map[currentNode.getX()][currentNode.getY()] == 'G') {
-				// store the path that the robot took
-				for(Node node = currentNode; node != null; node = prev.get(node)) {
-			        directions.add(node);
-			    }
-				Collections.reverse(directions);
-				statesExplored += 1;
-				System.out.println("");
-				System.out.println("Arrived at safe zone");
-				printPath("Find safe zone", map, directions);
-				System.out.println("Path cost: " + (directions.size() - 1));
-				System.out.println("State explored: " + statesExplored);
-				break;
-			}
-			successors = Expand(currentNode, frontier, explored);
-			frontier.addAll(successors);
-			for(Node node : successors) {
-				prev.put(node, currentNode);
-			}
-			if (frontier.isEmpty()) {
-				System.out.println("Failed to get to safety :(");
-			}
-			if (!currentNode.equals(initialNode)) {
-				statesExplored += 1;
-			}
-		}
+		frontier.clear();
+		explored.clear();
+		directions.clear();
+		prev.clear();
+		successors.clear();
 	}
 	
 	private ArrayList<Node> Expand(Node node, Deque<Node> frontier, 

@@ -8,10 +8,10 @@ import search.Search;
 public class Search2 {
 
 	public static void main(String[] args) {
-		String heuristicType = args[1];
 		char[][] map = Map.getChosenMap(args[2]);
 		int mapNumber = Integer.parseInt(args[2]);
 		System.out.println("Map " + args[2]);
+		String heuristicType = args[1];
 		Search searchAlg = new Search(map, mapNumber);
 		if (args[0].equals("BestFS")) {
 			searchAlg = new BestFS(map, heuristicType, mapNumber);
@@ -21,7 +21,9 @@ public class Search2 {
 			System.out.println("Invalid search algorithm");
 			System.exit(0);
 		}
-		searchAlg.search();
+		// Search for Bob, then search for safe goal position
+		searchAlg.search('B');
+		searchAlg.search('G');
 	}
 
 }

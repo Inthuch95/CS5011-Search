@@ -13,14 +13,16 @@ public class Search {
 	private ArrayList<Node> successors = new ArrayList<Node>();
 	private ArrayList<Node> explored = new ArrayList<Node>();
 	private Node startNode;
-	private Node goalNode = new Node(0, 0);
+	private Node goalNode;
 	private char[][] map;
-	private int mapNumber;
+	private int mapNumber, statesExplored;
 	public Search(char[][] map, int mapNumber){
 		this.map = map;
 		this.startNode = findStartNode();
+		// set the goal to find Bob at the start
 		this.setGoalNode('B');
 		this.setMapNumber(mapNumber);
+		this.setStateExplored(0);
 	}
 	
 	public Node getStartNode() {
@@ -35,6 +37,14 @@ public class Search {
 		return this.directions;
 	}
 	
+	public void constructPathToGoal(Node currentNode) {
+		// construct path to goal by backtracking from goal to initial position
+		for(Node node = currentNode; node != null; node = prev.get(node)) {
+	        directions.add(node);
+	    }
+		Collections.reverse(directions);
+	}
+	
 	public ArrayList<Node> getSuccessors() {
 		return this.successors;
 	}
@@ -44,6 +54,7 @@ public class Search {
 	}
 	
 	public Map<Node, Node> getPrev() {
+		// get parent node of current node
 		return this.prev;
 	} 
 	
@@ -52,11 +63,25 @@ public class Search {
 	}
 	
 	public int getMapNumber() {
+		// get chosen map number
 		return this.mapNumber;
 	}
 	
-	public void search() {
-		
+	public int getStatesExplored() {
+		// count how many states have been explored
+		return this.statesExplored;
+	}
+	
+	public void search(char goal) {
+
+	}
+	
+	public void setStateExplored(int statesExplored) {
+		this.statesExplored = statesExplored;
+	}
+	
+	public void setStartNode(Node startNode) {
+		this.startNode = startNode;
 	}
 	
 	public void setMapNumber(int mapNumber) {
@@ -68,8 +93,7 @@ public class Search {
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[i].length; j++) {
 				if (map[i][j] == goal) {
-					goalNode.setX(i);
-					goalNode.setY(j);
+					goalNode = new Node(i, j);
 					break;
 				}
 			}
