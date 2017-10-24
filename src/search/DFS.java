@@ -2,32 +2,33 @@ package search;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
 import map.Node;
 
 public class DFS extends Search {
-	private Map<Node, Node> prev = new HashMap<Node, Node>();
-	private ArrayList<Node> directions = new ArrayList<Node>();
-	private ArrayList<Node> successors = new ArrayList<Node>();
 	private Stack<Node> frontier = new Stack<Node>();
-	private ArrayList<Node> explored = new ArrayList<Node>();
-	private char[][] map = this.getMap();
-	private Node initialNode = this.getStartNode();
-	private int statesExplored = 0;
+	private Node initialNode;
+	private int statesExplored;
 	public DFS(char[][] map) {
 		super(map);
+		statesExplored = 0;
+		initialNode = this.getStartNode();
 	}
 	
 	public void search() {
-		findBob();
-		findSafeZone();
+		char[][] map = this.getMap();
+		findBob(map);
+		findSafeZone(map);
     }
 	
-	private void findBob() {
-		System.out.println("Start node: " + initialNode);
+	private void findBob(char[][] map) {
+		Map<Node, Node> prev = this.getPrev();
+		ArrayList<Node> directions =  this.getDirections();
+		ArrayList<Node> successors = this.getExplored();
+		ArrayList<Node> explored = this.getExplored();
+		System.out.println("Start node: " + initialNode + "\n");
 		frontier.add(initialNode);
 		Node currentNode = new Node(0, 0);
 		
@@ -35,9 +36,9 @@ public class DFS extends Search {
 		while(!frontier.isEmpty()) {
 			currentNode = frontier.pop();
 			explored.add(currentNode);
-//			System.out.println("current node: " + currentNode);
-//			System.out.println("frontier: " + frontier);
-//			System.out.println("explored: " + explored + "\n");
+			System.out.println("current node: " + currentNode);
+			System.out.println("frontier: " + frontier);
+			System.out.println("explored: " + explored + "\n");
 			if(map[currentNode.getX()][currentNode.getY()] == 'B') {
 				for(Node node = currentNode; node != null; node = prev.get(node)) {
 			        directions.add(node);
@@ -46,7 +47,8 @@ public class DFS extends Search {
 				statesExplored += 1;
 				System.out.println("");
 				System.out.println("Found Bob");
-				printPath("Find Bob");
+				printPath("Find Bob", map, directions);
+				System.out.println("Path cost: " + (directions.size() - 1));
 				System.out.println("State explored: " + statesExplored + "\n");
 				// reset the states
 				initialNode = currentNode;
@@ -57,8 +59,8 @@ public class DFS extends Search {
 				break;
 			}
 			successors = Expand(currentNode, frontier, explored);
+			frontier.addAll(successors);
 			for(Node node : successors) {
-				frontier.push(node);
 				prev.put(node, currentNode);
 			}
 			if (frontier.isEmpty()) {
@@ -70,16 +72,21 @@ public class DFS extends Search {
 		}
 	}
 	
-	private void findSafeZone() {
+	private void findSafeZone(char[][] map) {
+		Map<Node, Node> prev = this.getPrev();
+		ArrayList<Node> directions =  this.getDirections();
+		ArrayList<Node> successors = this.getExplored();
+		ArrayList<Node> explored = this.getExplored();
+		this.setGoalNode('G');
 		frontier.add(initialNode);
 		Node currentNode = new Node(0, 0);
 		// get to safety
 		while(!frontier.isEmpty()) {
 			currentNode = frontier.pop();
 			explored.add(currentNode);
-//			System.out.println("current node: " + currentNode);
-//			System.out.println("frontier: " + frontier);
-//			System.out.println("explored: " + explored + "\n");
+			System.out.println("current node: " + currentNode);
+			System.out.println("frontier: " + frontier);
+			System.out.println("explored: " + explored + "\n");
 			if(map[currentNode.getX()][currentNode.getY()] == 'G') {
 				for(Node node = currentNode; node != null; node = prev.get(node)) {
 			        directions.add(node);
@@ -88,13 +95,14 @@ public class DFS extends Search {
 				statesExplored += 1;
 				System.out.println("");
 				System.out.println("Arrived at safe zone");
-				printPath("Find safe zone");
+				printPath("Find safe zone", map, directions);
+				System.out.println("Path cost: " + (directions.size() - 1));
 				System.out.println("State explored: " + statesExplored);
 				break;
 			}
 			successors = Expand(currentNode, frontier, explored);
+			frontier.addAll(successors);
 			for(Node node : successors) {
-				frontier.push(node);
 				prev.put(node, currentNode);
 			}
 			if (frontier.isEmpty()) {
@@ -120,7 +128,7 @@ public class DFS extends Search {
 		return successors;
 	}
 	
-	private void printPath(String objective) {
+	private void printPath(String objective, char[][] map, ArrayList<Node> directions) {
 		System.out.println("--------------------------------------");
 		System.out.println("Depth First Search");
 		System.out.println("Objective: " + objective);

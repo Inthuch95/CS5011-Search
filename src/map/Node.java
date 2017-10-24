@@ -1,7 +1,7 @@
 package map;
 
 public class Node {
-	private int x, y;
+	private int x, y, distGoal;
 	public Node(int x, int y) {
 		this.x = x;
 		this.y = y;
@@ -13,6 +13,14 @@ public class Node {
 	
 	public int getY() {
 		return this.y;
+	}
+	
+	public int getDistanceToGoal() {
+		return this.distGoal;
+	}
+	
+	public void setDistanceToGoal(int dist) {
+		this.distGoal = dist;
 	}
 	
 	public void setX(int x) {
