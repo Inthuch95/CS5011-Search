@@ -12,8 +12,8 @@ public class BFS extends Search {
 	private Deque<Node> frontier = new ArrayDeque<Node>();
 	private Node initialNode;
 	private int statesExplored;
-	public BFS(char[][] map) {
-		super(map);
+	public BFS(char[][] map, int mapNumber) {
+		super(map, mapNumber);
 		statesExplored = 0;
 		initialNode = this.getStartNode();
 	}
@@ -30,6 +30,7 @@ public class BFS extends Search {
 		ArrayList<Node> successors = this.getExplored();
 		ArrayList<Node> explored = this.getExplored();
 		System.out.println("Start node: " + initialNode + "\n");
+		// BFS uses Deque to store frontier
 		frontier.add(initialNode);
 		Node currentNode = new Node(0, 0);
 		
@@ -40,7 +41,9 @@ public class BFS extends Search {
 			System.out.println("current node: " + currentNode);
 			System.out.println("frontier: " + frontier);
 			System.out.println("explored: " + explored + "\n");
+			// check if we have found Bob or not
 			if(map[currentNode.getX()][currentNode.getY()] == 'B') {
+				// store the path that robot took
 				for(Node node = currentNode; node != null; node = prev.get(node)) {
 			        directions.add(node);
 			    }
@@ -51,7 +54,7 @@ public class BFS extends Search {
 				printPath("Find Bob", map, directions);
 				System.out.println("Path cost: " + (directions.size() - 1));
 				System.out.println("State explored: " + statesExplored + "\n");
-				// reset the states
+				// use Bob's location as initial state
 				initialNode = currentNode;
 				frontier.clear();
 				explored.clear();
@@ -59,11 +62,14 @@ public class BFS extends Search {
 				prev.clear();
 				break;
 			}
+			// get successor states and add them to the frontier
 			successors = Expand(currentNode, frontier, explored);
 			frontier.addAll(successors);
+			// store information about parent node
 			for(Node node : successors) {
 				prev.put(node, currentNode);
 			}
+			// check for failure
 			if (frontier.isEmpty()) {
 				System.out.println("Failed to find Bob :(");
 			}
@@ -88,7 +94,9 @@ public class BFS extends Search {
 			System.out.println("current node: " + currentNode);
 			System.out.println("frontier: " + frontier);
 			System.out.println("explored: " + explored + "\n");
+			// check if the robot reaches the safe zone
 			if(map[currentNode.getX()][currentNode.getY()] == 'G') {
+				// store the path that the robot took
 				for(Node node = currentNode; node != null; node = prev.get(node)) {
 			        directions.add(node);
 			    }
@@ -132,6 +140,7 @@ public class BFS extends Search {
 	private void printPath(String objective, char[][] map, ArrayList<Node> directions) {
 		System.out.println("--------------------------------------");
 		System.out.println("Breadth First Search");
+		System.out.println("Map " + this.getMapNumber());
 		System.out.println("Objective: " + objective);
 		System.out.println("--------------------------------------");
 		String line = "";

@@ -1,6 +1,7 @@
 package search;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,10 +15,12 @@ public class Search {
 	private Node startNode;
 	private Node goalNode = new Node(0, 0);
 	private char[][] map;
-	public Search(char[][] map){
+	private int mapNumber;
+	public Search(char[][] map, int mapNumber){
 		this.map = map;
 		this.startNode = findStartNode();
 		this.setGoalNode('B');
+		this.setMapNumber(mapNumber);
 	}
 	
 	public Node getStartNode() {
@@ -48,11 +51,20 @@ public class Search {
 		return this.goalNode;
 	}
 	
+	public int getMapNumber() {
+		return this.mapNumber;
+	}
+	
 	public void search() {
 		
 	}
 	
+	public void setMapNumber(int mapNumber) {
+		this.mapNumber = mapNumber;
+	}
+	
 	public void setGoalNode(char goal) {
+		// goal can be Bob (B) or safe zone (G) 
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[i].length; j++) {
 				if (map[i][j] == goal) {
@@ -66,6 +78,7 @@ public class Search {
 	
 	public Node findStartNode() {
 		Node node = new Node(0, 0);
+		// find robot's initial position
 		for (int i = 0; i < this.map.length; i++) {
 			for (int j = 0; j < this.map[i].length; j++) {
 				if (this.map[i][j] == 'I') {
@@ -83,6 +96,7 @@ public class Search {
 		int x = node.getX();
 		int y = node.getY();
 		ArrayList<Node> nextStates = new ArrayList<Node>();
+		// get the potential next moves (up, down, left, right)
 		// up
         if(isValidChild(x - 1, y)) {
         	nextStates.add(new Node(x - 1, y));
@@ -102,11 +116,14 @@ public class Search {
  		if(isValidChild(x + 1, y)) {
  			nextStates.add(new Node(x + 1, y));
  	    }
+ 		// the order of node expansion is random for uninformed search (BFS and DFS)
+ 		Collections.shuffle(nextStates);
 		
 		return nextStates;
 	}
 	
 	protected boolean isValidChild(int x, int y) {
+		// validate if the move is legal or not (out of bound, blocked, etc.)
 		return !(x < 0 || x >= map.length || y < 0 || y >= map[0].length) && 
 				(map[x][y] != 'X');
 	}

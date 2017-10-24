@@ -1,8 +1,13 @@
 package map;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class Node {
-	private int x, y, distGoal;
+	private int x, y;
+	private double heuristic, score;
 	public Node(int x, int y) {
+		// set x and y coordinates
 		this.x = x;
 		this.y = y;
 	}
@@ -15,12 +20,36 @@ public class Node {
 		return this.y;
 	}
 	
-	public int getDistanceToGoal() {
-		return this.distGoal;
+	public double getHeuristic() {
+		return this.heuristic;
 	}
 	
-	public void setDistanceToGoal(int dist) {
-		this.distGoal = dist;
+	public double getScore() {
+		return this.score;
+	}
+	
+	public void setScore(double score) {
+		this.score = score;
+	}
+	
+	public void setHeuristic(String heuristic, Node goalNode) {
+		// get the chosen heuristic
+		if (heuristic.equals("M")) {
+			// Manhattan distance
+			this.heuristic = Math.abs(goalNode.getX() - this.getX()) + 
+					Math.abs(goalNode.getY() - this.getY());
+		} else if (heuristic.equals("E")) {
+			// Euclidean distance
+			this.heuristic = Math.sqrt(Math.pow(goalNode.getX() - this.getX(), 2) + 
+					Math.pow(goalNode.getY() - this.getY(), 2));
+		} else if (heuristic.equals("C")) {
+			// Chebyshev distance
+			ArrayList<Double> chevDist = new ArrayList<Double>();
+			chevDist.add((double) Math.abs(goalNode.getX() - this.getX()));
+			chevDist.add((double) Math.abs(goalNode.getY() - this.getY()));
+			Collections.sort(chevDist);
+			this.heuristic = chevDist.get(chevDist.size() - 1);
+		}
 	}
 	
 	public void setX(int x) {
@@ -41,7 +70,8 @@ public class Node {
 	
 	@Override
 	public boolean equals(Object node) {
-	    if (!(node instanceof Node)) {
+	    // this will be used to check if particular node is in frontier/explored or not
+		if (!(node instanceof Node)) {
 	        return false;
 	    }
 

@@ -11,8 +11,8 @@ public class DFS extends Search {
 	private Stack<Node> frontier = new Stack<Node>();
 	private Node initialNode;
 	private int statesExplored;
-	public DFS(char[][] map) {
-		super(map);
+	public DFS(char[][] map, int mapNumber) {
+		super(map, mapNumber);
 		statesExplored = 0;
 		initialNode = this.getStartNode();
 	}
@@ -29,6 +29,7 @@ public class DFS extends Search {
 		ArrayList<Node> successors = this.getExplored();
 		ArrayList<Node> explored = this.getExplored();
 		System.out.println("Start node: " + initialNode + "\n");
+		// DFS uses Stack to store frontier
 		frontier.add(initialNode);
 		Node currentNode = new Node(0, 0);
 		
@@ -131,6 +132,7 @@ public class DFS extends Search {
 	private void printPath(String objective, char[][] map, ArrayList<Node> directions) {
 		System.out.println("--------------------------------------");
 		System.out.println("Depth First Search");
+		System.out.println("Map " + this.getMapNumber());
 		System.out.println("Objective: " + objective);
 		System.out.println("--------------------------------------");
 		String line = "";

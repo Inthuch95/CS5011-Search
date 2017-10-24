@@ -82,6 +82,7 @@ public class Map {
 		};
 		
 		public static char[][] getChosenMap(String mapChoice) {
+			// get the chosen map
 			int option = Integer.parseInt(mapChoice);
 			char[][] map = map1;
 			switch(option) {

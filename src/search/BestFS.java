@@ -3,20 +3,32 @@ package search;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
-import java.util.Stack;
+import java.util.PriorityQueue;
 
 import map.Node;
 
 public class BestFS extends Search {
-	private Stack<Node> frontier = new Stack<Node>();
+	private PriorityQueue<Node> frontier;
 	private Node initialNode;
 	private int statesExplored;
-	public BestFS(char[][] map) {
-		super(map);
+	private String heuristicType;
+	public BestFS(char[][] map, String heuristicType, int mapNumber) {
+		super(map, mapNumber);
 		statesExplored = 0;
+		this.heuristicType = heuristicType;
 		initialNode = this.getStartNode();
+		frontier = new PriorityQueue<Node>(new Comparator<Node>() {
+			public int compare(Node n1, Node n2) {
+				if (n1.getScore() < n2.getScore()) {
+					return -1;
+				}
+				if (n1.getScore() > n2.getScore()) {
+					return 1;
+				}
+				return 0;
+			}
+		});
 	}
 	
 	public void search() {
@@ -31,12 +43,13 @@ public class BestFS extends Search {
 		ArrayList<Node> successors = this.getExplored();
 		ArrayList<Node> explored = this.getExplored();
 		System.out.println("Start node: " + initialNode + "\n");
+		// BestFS uses PriorityQueue to store frontier
 		frontier.add(initialNode);
 		Node currentNode = new Node(0, 0);
 		
 		// find Bob
 		while(!frontier.isEmpty()) {
-			currentNode = frontier.pop();
+			currentNode = frontier.poll();
 			explored.add(currentNode);
 			System.out.println("current node: " + currentNode);
 			System.out.println("frontier: " + frontier);
@@ -84,7 +97,7 @@ public class BestFS extends Search {
 		Node currentNode = new Node(0, 0);
 		// get to safety
 		while(!frontier.isEmpty()) {
-			currentNode = frontier.pop();
+			currentNode = frontier.poll();
 			explored.add(currentNode);
 			System.out.println("current node: " + currentNode);
 			System.out.println("frontier: " + frontier);
@@ -116,7 +129,7 @@ public class BestFS extends Search {
 		}
 	}
 	
-	private ArrayList<Node> Expand(Node node, Stack<Node> frontier, 
+	private ArrayList<Node> Expand(Node node, PriorityQueue<Node> frontier, 
 			ArrayList<Node> explored) {
 		ArrayList<Node> nextStates = getNextStates(node);
 		ArrayList<Node> successors = new ArrayList<Node>();
@@ -130,10 +143,56 @@ public class BestFS extends Search {
 		return successors;
 	}
 	
+	public ArrayList<Node> getNextStates(Node node) {
+		int x = node.getX();
+		int y = node.getY();
+		Node goalNode = this.getGoalNode();
+		ArrayList<Node> nextStates = new ArrayList<Node>();	
+		/**
+		 * BestFS uses estimated cost from current node to goal as a score 
+		 */
+		// up
+        if(isValidChild(x - 1, y)) {
+        	Node up = new Node(x - 1, y);
+        	up.setHeuristic(heuristicType, goalNode);
+        	up.setScore(up.getHeuristic());
+        	nextStates.add(up);
+        }
+        
+        // down
+        if(isValidChild(x + 1, y)) {
+        	Node down = new Node(x + 1, y);
+        	down.setHeuristic(heuristicType, goalNode);
+        	down.setScore(down.getHeuristic());
+        	nextStates.add(down);
+        }
+        
+        // left
+        if(isValidChild(x, y - 1)) {
+        	Node left = new Node(x, y - 1);
+        	left.setHeuristic(heuristicType, goalNode);
+        	left.setScore(left.getHeuristic());
+        	nextStates.add(left);
+        }
+        
+        // right
+ 		if(isValidChild(x, y + 1)) {
+ 			Node right = new Node(x, y + 1);
+ 			right.setHeuristic(heuristicType, goalNode);
+ 			right.setScore(right.getHeuristic());
+ 			nextStates.add(right);
+ 	    }
+		
+		return nextStates;
+	}
+	
 	private void printPath(String objective, char[][] map, ArrayList<Node> directions) {
+		String heuristic = checkHeuristic();
 		System.out.println("--------------------------------------");
-		System.out.println("Depth First Search");
+		System.out.println("Best First Search");
+		System.out.println("Map " + this.getMapNumber());
 		System.out.println("Objective: " + objective);
+		System.out.println("Heuristic: " + heuristic);
 		System.out.println("--------------------------------------");
 		String line = "";
 		Node node;
@@ -163,38 +222,16 @@ public class BestFS extends Search {
 		System.out.println("--------------------------------------");
 	}
 	
-	public ArrayList<Node> getNextStates(Node node) {
-		int x = node.getX();
-		int y = node.getY();
-		Node goalNode = this.getGoalNode();
-		ArrayList<Node> nextStates = new ArrayList<Node>();
-		Node up = new Node(x - 1, y);
-		Node down = new Node(x + 1, y);
-		Node left = new Node(x, y - 1);
-		Node right = new Node(x, y + 1);
-		up.setDistanceToGoal(Math.abs(goalNode.getX() - up.getX()) + 
-				Math.abs(goalNode.getY() - up.getY()));
-		down.setDistanceToGoal(Math.abs(goalNode.getX() - down.getX()) + 
-				Math.abs(goalNode.getY() - down.getY()));
-		left.setDistanceToGoal(Math.abs(goalNode.getX() - left.getX()) + 
-				Math.abs(goalNode.getY() - left.getY()));
-		right.setDistanceToGoal(Math.abs(goalNode.getX() - right.getX()) + 
-				Math.abs(goalNode.getY() - right.getY()));
-		List<Node> nodes = new ArrayList<Node>();
-		nodes.add(up);
-		nodes.add(down);
-		nodes.add(left);
-		nodes.add(right);
-		Collections.sort(nodes, new Comparator<Node> () {
-			public int compare(Node n1, Node n2) {
-				return n2.getDistanceToGoal() - n1.getDistanceToGoal();
-			}
-		});
-		for (int i = 0; i < nodes.size(); i++) {
-			if (isValidChild(nodes.get(i).getX(), nodes.get(i).getY())) {
-				nextStates.add(nodes.get(i));
-			}
+	private String checkHeuristic() {
+		String heuristic = "";
+		if (heuristicType.equals("M")) {
+			heuristic =  "Manhattan distance";
+		} else if (heuristicType.equals("E")) {
+			heuristic =  "Euclidean distance";
+		} else if (heuristicType.equals("C")) {
+			heuristic =  "Chebyshev distance";
 		}
-		return nextStates;
+		
+		return heuristic;
 	}
 }
