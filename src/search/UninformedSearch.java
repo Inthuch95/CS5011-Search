@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Map;
 
-import map.Node;
-
-public class BFS extends Search {
+public class UninformedSearch extends Search {
 	private Deque<Node> frontier = new ArrayDeque<Node>();
-	public BFS(char[][] map, int mapNumber) {
+	private String algorithm;
+	public UninformedSearch(char[][] map, int mapNumber, String algorithm) {
 		super(map, mapNumber);
+		this.algorithm = algorithm;
 	}
 	
 	public void search(char goal) {
@@ -25,10 +25,10 @@ public class BFS extends Search {
 		frontier.add(startNode);
 		Node currentNode = new Node(0, 0);
 		
-		// Perform Breadth First Search
+		// Perform search
 		while(!frontier.isEmpty()) {
-			// remove the first item from the frontier
-			currentNode = frontier.remove();
+			// remove the the first node from the frontier 
+			currentNode = frontier.poll();
 			explored.add(currentNode);
 			printStatus(goal, currentNode, explored);
 			// check if the robot has reached the goal
@@ -42,9 +42,13 @@ public class BFS extends Search {
 			}
 			// expand the nodes
 			successors = Expand(currentNode, frontier, explored);
-			frontier.addAll(successors);
 			for(Node node : successors) {
 				prev.put(node, currentNode);
+				if (algorithm.equals("BFS")) {
+					frontier.addLast(node);
+				} else {
+					frontier.addFirst(node);
+				}
 			}
 			checkFailure(goal);
 			// keep track of states explored
@@ -112,7 +116,11 @@ public class BFS extends Search {
 	
 	private void printPath(String objective, char[][] map, ArrayList<Node> directions) {
 		System.out.println("--------------------------------------");
-		System.out.println("Breadth First Search");
+		if (algorithm.equals("BFS")) {
+			System.out.println("Breadth First Search");
+		} else {
+			System.out.println("Depth First Search");
+		}
 		System.out.println("Map " + this.getMapNumber());
 		System.out.println("Objective: " + objective);
 		System.out.println("--------------------------------------");

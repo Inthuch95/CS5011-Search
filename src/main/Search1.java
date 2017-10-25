@@ -1,9 +1,7 @@
 package main;
 
 import map.Map;
-import search.BFS;
-import search.DFS;
-import search.Search;
+import search.UninformedSearch;
 
 public class Search1 {
 
@@ -11,15 +9,8 @@ public class Search1 {
 		char[][] map = Map.getChosenMap(args[1]);
 		int mapNumber = Integer.parseInt(args[1]);
 		System.out.println("Map " + args[1]);
-		Search searchAlg = new Search(map, mapNumber);
-		if (args[0].equals("BFS")) {
-			searchAlg = new BFS(map, mapNumber);
-		} else if (args[0].equals("DFS")) {
-			searchAlg = new DFS(map, mapNumber);
-		} else{
-			System.out.println("Invalid search algorithm");
-			System.exit(0);
-		}
+		String algorithm = args[0];
+		UninformedSearch searchAlg = new UninformedSearch(map, mapNumber, algorithm);
 		// Search for Bob, then search for safe goal position
 		searchAlg.search('B');
 		searchAlg.search('G');

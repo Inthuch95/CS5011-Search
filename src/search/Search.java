@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import map.Node;
-
 public class Search {
 	private Map<Node, Node> prev = new HashMap<Node, Node>();
 	private ArrayList<Node> directions = new ArrayList<Node>();

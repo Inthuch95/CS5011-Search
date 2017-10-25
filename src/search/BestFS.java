@@ -5,8 +5,6 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-import map.Node;
-
 public class BestFS extends Search {
 	private PriorityQueue<Node> frontier;
 	private String heuristicType;
