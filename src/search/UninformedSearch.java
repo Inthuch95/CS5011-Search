@@ -66,10 +66,14 @@ public class UninformedSearch extends Search {
 		// print the search summary once the robot reached the goal
 		int pathCost = (directionBob.size() + directionGoal.size()) - 2;
 		System.out.println("\nSummary");
-		if (directionBob.isEmpty()) {
-			System.out.println("Failed to find Bob");
-		} else if (directionGoal.isEmpty()) {
-			System.out.println("Failed to get to safety");
+		if (directionBob.isEmpty() || directionGoal.isEmpty()) {
+			System.out.println("Unsuccessful search operation");
+			if (directionBob.isEmpty()) {
+				System.out.println("Cannot get to Bob");
+			} else {
+				printPath("Find Bob", this.getMap(), directionBob);
+				System.out.println("Cannot get Bob to safety");
+			}
 		} else {
 			printPath("Find Bob", this.getMap(), directionBob);
 			printPath("Find safe zone", this.getMap(), directionGoal);
@@ -79,6 +83,7 @@ public class UninformedSearch extends Search {
 	}
 	
 	private void saveObjectivePath(char goal) {
+		// save path to Bob or path to goal
 		ArrayList<Node> directions = this.getDirections();
 		for (Node node : directions) {
 			if (goal == 'B') {
@@ -92,7 +97,7 @@ public class UninformedSearch extends Search {
 	private void checkFailure(char goal) {
 		// if there's no more nodes to expand then the search has failed
 		if (frontier.isEmpty() && goal == 'B') {
-			System.out.println("Failed to find Bob :(");
+			System.out.println("Failed to find Bob");
 		} else if (frontier.isEmpty() && goal == 'G') {
 			System.out.println("Failed to get to safety");
 		}
@@ -113,6 +118,7 @@ public class UninformedSearch extends Search {
 	
 	private ArrayList<Node> Expand(Node node, Deque<Node> frontier, 
 			ArrayList<Node> explored) {
+		// expand the nodes and return list of successor nodes
 		ArrayList<Node> nextStates = getNextStates(node);
 		ArrayList<Node> successors = new ArrayList<Node>();
 		for(int i = 0; i < nextStates.size(); i++) {
@@ -126,6 +132,7 @@ public class UninformedSearch extends Search {
 	}
 	
 	private void printObjectiveCompleted(char goal) {
+		// print objective complete message
 		if (goal == 'B') {
 			System.out.println("Found Bob!");
 		}
@@ -135,6 +142,7 @@ public class UninformedSearch extends Search {
 	}
 	
 	private void printStatus(char goal, Node currentNode, ArrayList<Node> explored) {
+		// print the current node, frontier, explored 
 		System.out.println("--------------------------------------");
 		String printOut = "";
 		Node node;
@@ -161,6 +169,7 @@ public class UninformedSearch extends Search {
 	}
 	
 	private void printPath(String objective, char[][] map, ArrayList<Node> directions) {
+		// print path from initial position to goal
 		System.out.println("--------------------------------------");
 		if (algorithm.equals("BFS")) {
 			System.out.println("Breadth First Search");

@@ -17,7 +17,6 @@ public class Search {
 	public Search(char[][] map, int mapNumber){
 		this.map = map;
 		this.startNode = findStartNode();
-		// set the goal to find Bob at the start
 		this.setMapNumber(mapNumber);
 		this.setStateExplored(0);
 	}
@@ -117,23 +116,23 @@ public class Search {
 		int x = node.getX();
 		int y = node.getY();
 		ArrayList<Node> nextStates = new ArrayList<Node>();
-		// get the potential next moves (up, down, left, right)
-		// up
+		// get the potential next moves (North, South, East, West)
+		// North
         if(isValidChild(x - 1, y)) {
         	nextStates.add(new Node(x - 1, y));
         }
         
-        // left
+        // West
         if(isValidChild(x, y - 1)) {
         	nextStates.add(new Node(x, y - 1));
         }
         
-        // right
+        // East
         if(isValidChild(x, y + 1)) {
         	nextStates.add(new Node(x, y + 1));
         }
         
-        // down
+        // South
  		if(isValidChild(x + 1, y)) {
  			nextStates.add(new Node(x + 1, y));
  	    }

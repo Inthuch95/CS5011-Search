@@ -35,6 +35,7 @@ public class InformedSearch extends Search {
 		ArrayList<Node> successors = this.getSuccessors();
 		ArrayList<Node> explored = this.getExplored();
 		Node startNode = this.getStartNode();
+		startNode.setPathCost(0);
 		this.setGoalNode(goal);
 		System.out.println("Start node: " + startNode + "\n");
 		// BFS uses Deque to store frontier
@@ -76,10 +77,14 @@ public class InformedSearch extends Search {
 		// print the search summary once the robot reached the goal
 		int pathCost = (directionBob.size() + directionGoal.size()) - 2;
 		System.out.println("\nSummary");
-		if (directionBob.isEmpty()) {
-			System.out.println("Failed to find Bob");
-		} else if (directionGoal.isEmpty()) {
-			System.out.println("Failed to get to safety");
+		if (directionBob.isEmpty() || directionGoal.isEmpty()) {
+			System.out.println("Unsuccessful search operation");
+			if (directionBob.isEmpty()) {
+				System.out.println("Cannot get to Bob");
+			} else {
+				printPath("Find Bob", this.getMap(), directionBob);
+				System.out.println("Cannot get Bob to safety");
+			}
 		} else {
 			printPath("Find Bob", this.getMap(), directionBob);
 			printPath("Find safe zone", this.getMap(), directionGoal);
@@ -94,9 +99,33 @@ public class InformedSearch extends Search {
 		ArrayList<Node> nextStates = getNextStates(node);
 		ArrayList<Node> successors = new ArrayList<Node>();
 		for(int i = 0; i < nextStates.size(); i++) {
-			if (!explored.contains(nextStates.get(i)) &&
-					!frontier.contains(nextStates.get(i))) {
-				successors.add(nextStates.get(i));
+			if (algorithm.equals("BestFS")) {
+				if (!explored.contains(nextStates.get(i)) &&
+						!frontier.contains(nextStates.get(i))) {
+					successors.add(nextStates.get(i));
+				}
+			}
+			/**  
+			 * if state is in a node in frontier but with higher PATH-COST then
+			 * replace old node with new node (A*)
+			 */
+			else {
+				if (!explored.contains(nextStates.get(i)) &&
+						!frontier.contains(nextStates.get(i))) {
+					successors.add(nextStates.get(i));
+				} else if (frontier.contains(nextStates.get(i))) {
+					Node oldNode = new Node(0, 0);
+					for (Node n : frontier) {
+						if (n.equals(nextStates.get(i))) {
+							oldNode = n;
+							break;
+						}
+					}
+					if (oldNode.getPathCost() > nextStates.get(i).getPathCost()) {
+						frontier.remove(oldNode);
+						frontier.add(nextStates.get(i));
+					}
+				}
 			}
 		}
 		
@@ -109,37 +138,61 @@ public class InformedSearch extends Search {
 		Node goalNode = this.getGoalNode();
 		ArrayList<Node> nextStates = new ArrayList<Node>();	
 		/**
-		 * BestFS uses estimated cost from current node to goal as a score 
+		 * BestFS score f(n) = h(n)
+		 * A* score f(n) = g(n) + h(n)
+		 * 
+		 * h(n) = estimated cost of the path from the state at node n to the goal
+		 * g(n) = the cost of the path from the start to the node n 
 		 */
-		// up
+		// North
         if(isValidChild(x - 1, y)) {
         	Node up = new Node(x - 1, y);
+        	up.setPathCost(node.getPathCost() + 1);
         	up.setHeuristic(heuristicType, goalNode);
-        	up.setScore(up.getHeuristic());
+        	if (algorithm.equals("BestFS")) {
+        		up.setScore(up.getHeuristic());
+        	} else {
+        		up.setScore(up.getHeuristic() + up.getPathCost());
+        	}
         	nextStates.add(up);
         }
         
-        // down
+        // South
         if(isValidChild(x + 1, y)) {
         	Node down = new Node(x + 1, y);
+        	down.setPathCost(node.getPathCost() + 1);
         	down.setHeuristic(heuristicType, goalNode);
-        	down.setScore(down.getHeuristic());
+        	if (algorithm.equals("BestFS")) {
+        		down.setScore(down.getHeuristic());
+        	} else {
+        		down.setScore(down.getHeuristic() + down.getPathCost());
+        	}
         	nextStates.add(down);
         }
         
-        // left
+        // West
         if(isValidChild(x, y - 1)) {
         	Node left = new Node(x, y - 1);
+        	left.setPathCost(node.getPathCost() + 1);
         	left.setHeuristic(heuristicType, goalNode);
-        	left.setScore(left.getHeuristic());
+        	if (algorithm.equals("BestFS")) {
+        		left.setScore(left.getHeuristic());
+        	} else {
+        		left.setScore(left.getHeuristic() + left.getPathCost());
+        	}
         	nextStates.add(left);
         }
         
-        // right
+        // East
  		if(isValidChild(x, y + 1)) {
  			Node right = new Node(x, y + 1);
+ 			right.setPathCost(node.getPathCost() + 1);
  			right.setHeuristic(heuristicType, goalNode);
- 			right.setScore(right.getHeuristic());
+ 			if (algorithm.equals("BestFS")) {
+        		right.setScore(right.getHeuristic());
+        	} else {
+        		right.setScore(right.getHeuristic() + right.getPathCost());
+        	}
  			nextStates.add(right);
  	    }
 		
@@ -147,6 +200,7 @@ public class InformedSearch extends Search {
 	}
 	
 	private void saveObjectivePath(char goal) {
+		// save path to Bob or path to goal
 		ArrayList<Node> directions = this.getDirections();
 		for (Node node : directions) {
 			if (goal == 'B') {
@@ -160,7 +214,7 @@ public class InformedSearch extends Search {
 	private void checkFailure(char goal) {
 		// if there's no more nodes to expand then the search has failed
 		if (frontier.isEmpty() && goal == 'B') {
-			System.out.println("Failed to find Bob :(");
+			System.out.println("Failed to find Bob");
 		} else if (frontier.isEmpty() && goal == 'G') {
 			System.out.println("Failed to get to safety");
 		}
@@ -189,6 +243,7 @@ public class InformedSearch extends Search {
 	}
 	
 	private void printStatus(char goal, Node currentNode, ArrayList<Node> explored) {
+		// print current node, frontier, explored
 		System.out.println("--------------------------------------");
 		String printOut = "";
 		Node node;
