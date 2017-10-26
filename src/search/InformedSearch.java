@@ -5,12 +5,17 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-public class BestFS extends Search {
+public class InformedSearch extends Search {
 	private PriorityQueue<Node> frontier;
 	private String heuristicType;
-	public BestFS(char[][] map, String heuristicType, int mapNumber) {
+	private ArrayList<Node> directionBob = new ArrayList<Node>();
+	private ArrayList<Node> directionGoal = new ArrayList<Node>();
+	private String algorithm;
+	public InformedSearch(char[][] map, int mapNumber, String heuristicType, 
+			String algorithm) {
 		super(map, mapNumber);
 		this.heuristicType = heuristicType;
+		this.algorithm = algorithm;
 		frontier = new PriorityQueue<Node>(new Comparator<Node>() {
 			public int compare(Node n1, Node n2) {
 				if (n1.getScore() < n2.getScore()) {
@@ -26,29 +31,30 @@ public class BestFS extends Search {
 	
 	public void search(char goal) {
 		clearData();
-		char[][] map = this.getMap();
 		Map<Node, Node> prev = this.getPrev();
 		ArrayList<Node> successors = this.getSuccessors();
 		ArrayList<Node> explored = this.getExplored();
 		Node startNode = this.getStartNode();
+		this.setGoalNode(goal);
 		System.out.println("Start node: " + startNode + "\n");
-		// BestFS uses PriorityQueue to store frontier
+		// BFS uses Deque to store frontier
 		frontier.add(startNode);
 		Node currentNode = new Node(0, 0);
 		
-		// Perform Best First Search
+		// Perform search
 		while(!frontier.isEmpty()) {
-			// remove the first item from the frontier
+			// remove the the first node from the frontier 
 			currentNode = frontier.poll();
-			explored.add(currentNode);
 			printStatus(goal, currentNode, explored);
+			explored.add(currentNode);
 			// check if the robot has reached the goal
-			if(map[currentNode.getX()][currentNode.getY()] == goal) {
-				this.constructPathToGoal(currentNode);
-				this.setStateExplored(this.getStatesExplored() + 1);
-				printSummary(goal);
+			if(currentNode.equals(this.getGoalNode())) {
 				// assign new initial state
 				this.setStartNode(currentNode);
+				this.constructPathToGoal(currentNode);
+				this.setStateExplored(this.getStatesExplored() + 1);
+				saveObjectivePath(goal);
+				printObjectiveCompleted(goal);
 				break;
 			}
 			// expand the nodes
@@ -57,6 +63,7 @@ public class BestFS extends Search {
 			for(Node node : successors) {
 				prev.put(node, currentNode);
 			}
+			printStatus(goal, currentNode, explored);
 			checkFailure(goal);
 			// keep track of states explored
 			if (!currentNode.equals(startNode)) {
@@ -65,46 +72,20 @@ public class BestFS extends Search {
 		}
     }
 	
-	private void printSummary(char goal) {
+	public void printSummary() {
 		// print the search summary once the robot reached the goal
-		System.out.println("");
-		if (goal == 'B') {
-			System.out.println("Found Bob");
-			printPath("Find Bob", this.getMap(), this.getDirections());
-		} else {
-			System.out.println("Arrived at safe zone");
-			printPath("Find safe zone", this.getMap(), this.getDirections());
-		}
-		System.out.println("Path cost: " + (this.getDirections().size() - 1));
-		System.out.println("State explored: " + this.getStatesExplored() + "\n");
-	}
-	
-	private void printStatus(char goal, Node currentNode, ArrayList<Node> explored) {
-		System.out.println("current node: " + currentNode);
-		System.out.println("frontier: " + frontier);
-		System.out.println("explored: " + explored + "\n");
-	}
-	
-	private void checkFailure(char goal) {
-		// if there's no more nodes to expand then the search has failed
-		if (frontier.isEmpty() && goal == 'B') {
-			System.out.println("Failed to find Bob :(");
-		} else if (frontier.isEmpty() && goal == 'G') {
+		int pathCost = (directionBob.size() + directionGoal.size()) - 2;
+		System.out.println("\nSummary");
+		if (directionBob.isEmpty()) {
+			System.out.println("Failed to find Bob");
+		} else if (directionGoal.isEmpty()) {
 			System.out.println("Failed to get to safety");
+		} else {
+			printPath("Find Bob", this.getMap(), directionBob);
+			printPath("Find safe zone", this.getMap(), directionGoal);
+			System.out.println("Path cost: " + pathCost);
 		}
-	}
-	
-	private void clearData () {
-		// clear everything in order to prepare for new search operation
-		Map<Node, Node> prev = this.getPrev();
-		ArrayList<Node> directions =  this.getDirections();
-		ArrayList<Node> successors = this.getSuccessors();
-		ArrayList<Node> explored = this.getExplored();
-		frontier.clear();
-		explored.clear();
-		directions.clear();
-		prev.clear();
-		successors.clear();
+		System.out.println("State explored: " + this.getStatesExplored() + "\n");
 	}
 	
 	private ArrayList<Node> Expand(Node node, PriorityQueue<Node> frontier, 
@@ -165,11 +146,83 @@ public class BestFS extends Search {
 		return nextStates;
 	}
 	
+	private void saveObjectivePath(char goal) {
+		ArrayList<Node> directions = this.getDirections();
+		for (Node node : directions) {
+			if (goal == 'B') {
+				directionBob.add(node);
+			} else {
+				directionGoal.add(node);
+			}
+		}
+	}
+	
+	private void checkFailure(char goal) {
+		// if there's no more nodes to expand then the search has failed
+		if (frontier.isEmpty() && goal == 'B') {
+			System.out.println("Failed to find Bob :(");
+		} else if (frontier.isEmpty() && goal == 'G') {
+			System.out.println("Failed to get to safety");
+		}
+	}
+	
+	private void clearData () {
+		// clear everything in order to prepare for new search operation
+		Map<Node, Node> prev = this.getPrev();
+		ArrayList<Node> directions =  this.getDirections();
+		ArrayList<Node> successors = this.getSuccessors();
+		ArrayList<Node> explored = this.getExplored();
+		frontier.clear();
+		explored.clear();
+		directions.clear();
+		prev.clear();
+		successors.clear();
+	}
+	
+	private void printObjectiveCompleted(char goal) {
+		if (goal == 'B') {
+			System.out.println("Found Bob!");
+		}
+		else {
+			System.out.println("Arrived at safe zone");
+		}
+	}
+	
+	private void printStatus(char goal, Node currentNode, ArrayList<Node> explored) {
+		System.out.println("--------------------------------------");
+		String printOut = "";
+		Node node;
+		char[][] map = this.getMap();
+		for(int i = 0; i < map.length; i++) {
+			for(int j = 0; j < map[i].length; j++) {
+				node = new Node(i, j);
+				if (node.equals(currentNode)) {
+					printOut = "C";
+				} else if (frontier.contains(node)) {
+					printOut = "F";
+				} else if (explored.contains(node)) {
+					printOut = "E";
+				} else {
+					printOut = Character.toString(map[i][j]);
+				}
+				System.out.printf("%-4s", printOut);
+			}
+			System.out.println("");
+			printOut = "";
+		}
+		System.out.println("--------------------------------------");
+		
+	}
+	
 	private void printPath(String objective, char[][] map, ArrayList<Node> directions) {
 		// show the path that the robot took in grid format
 		String heuristic = checkHeuristic();
 		System.out.println("--------------------------------------");
-		System.out.println("Best First Search");
+		if (algorithm.equals("BestFS")) {
+			System.out.println("Best First Search");
+		} else {
+			System.out.println("A*");
+		}
 		System.out.println("Map " + this.getMapNumber());
 		System.out.println("Objective: " + objective);
 		System.out.println("Heuristic: " + heuristic);

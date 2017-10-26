@@ -18,7 +18,6 @@ public class Search {
 		this.map = map;
 		this.startNode = findStartNode();
 		// set the goal to find Bob at the start
-		this.setGoalNode('B');
 		this.setMapNumber(mapNumber);
 		this.setStateExplored(0);
 	}
