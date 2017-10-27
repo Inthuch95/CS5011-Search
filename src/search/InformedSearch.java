@@ -40,7 +40,7 @@ public class InformedSearch extends Search {
 		System.out.println("Start node: " + startNode + "\n");
 		// BFS uses Deque to store frontier
 		frontier.add(startNode);
-		Node currentNode = new Node(0, 0);
+		Node currentNode = startNode;
 		
 		// Perform search
 		while(!frontier.isEmpty()) {
@@ -91,6 +91,10 @@ public class InformedSearch extends Search {
 			System.out.println("Path cost: " + pathCost);
 		}
 		System.out.println("State explored: " + this.getStatesExplored() + "\n");
+	}
+	
+	public ArrayList<Node> getDirectionBob() {
+		return this.directionBob;
 	}
 	
 	private ArrayList<Node> Expand(Node node, PriorityQueue<Node> frontier, 

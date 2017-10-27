@@ -30,7 +30,7 @@
   </class>  
   <class id="4" language="java" name="search.UninformedSearch" project="AI-Search" 
     file="/AI-Search/src/search/UninformedSearch.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="390" y="860"/>    
+    <position height="-1" width="-1" x="381" y="932"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      

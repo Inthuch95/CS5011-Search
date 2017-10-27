@@ -1,8 +1,5 @@
 package search;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 public class Node {
 	private int x, y;
 	private double heuristic, score, pathCost;
@@ -53,13 +50,13 @@ public class Node {
 			// Euclidean distance
 			this.heuristic = Math.sqrt(Math.pow(goalNode.getX() - this.getX(), 2) + 
 					Math.pow(goalNode.getY() - this.getY(), 2));
-		} else if (heuristic.equals("C")) {
-			// Chebyshev distance
-			ArrayList<Double> chevDist = new ArrayList<Double>();
-			chevDist.add((double) Math.abs(goalNode.getX() - this.getX()));
-			chevDist.add((double) Math.abs(goalNode.getY() - this.getY()));
-			Collections.sort(chevDist);
-			this.heuristic = chevDist.get(chevDist.size() - 1);
+		} else if (heuristic.equals("all")) {
+			// choose the maximum between Manhattan distance and Euclidean distance 
+			double manDist = Math.abs(goalNode.getX() - this.getX()) + 
+					Math.abs(goalNode.getY() - this.getY());
+			double euclidDist = Math.sqrt(Math.pow(goalNode.getX() - this.getX(), 2) + 
+					Math.pow(goalNode.getY() - this.getY(), 2));
+			this.heuristic = Math.max(manDist, euclidDist);
 		}
 	}
 	

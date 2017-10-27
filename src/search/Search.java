@@ -136,8 +136,6 @@ public class Search {
  		if(isValidChild(x + 1, y)) {
  			nextStates.add(new Node(x + 1, y));
  	    }
- 		// the order of node expansion is random for uninformed search (BFS and DFS)
- 		Collections.shuffle(nextStates);
 		
 		return nextStates;
 	}

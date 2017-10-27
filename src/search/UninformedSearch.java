@@ -25,7 +25,7 @@ public class UninformedSearch extends Search {
 		System.out.println("Start node: " + startNode + "\n");
 		// BFS uses Deque to store frontier
 		frontier.add(startNode);
-		Node currentNode = new Node(0, 0);
+		Node currentNode = startNode;
 		printStatus(goal, currentNode, explored);
 		
 		// Perform search
@@ -68,6 +68,7 @@ public class UninformedSearch extends Search {
 		System.out.println("\nSummary");
 		if (directionBob.isEmpty() || directionGoal.isEmpty()) {
 			System.out.println("Unsuccessful search operation");
+			System.out.println("Algorithm: " + algorithm);
 			if (directionBob.isEmpty()) {
 				System.out.println("Cannot get to Bob");
 			} else {
@@ -80,6 +81,10 @@ public class UninformedSearch extends Search {
 			System.out.println("Path cost: " + pathCost);
 		}
 		System.out.println("State explored: " + this.getStatesExplored() + "\n");
+	}
+	
+	public ArrayList<Node> getDirectionBob() {
+		return this.directionBob;
 	}
 	
 	private void saveObjectivePath(char goal) {
