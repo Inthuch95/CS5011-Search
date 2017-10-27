@@ -14,9 +14,12 @@ public class Search2 {
 		System.out.println("Algorithm: " + algorithm);
 		InformedSearch searchAlg = new InformedSearch(map, mapNumber, heuristicType, 
 				algorithm);
-		// Search for Bob, then search for safe goal position
+		// search for Bob, then search for safe goal position
 		searchAlg.search('B');
-		searchAlg.search('G');
+		// only search for goal position if the robot managed to find a way to get to Bob
+		if (!searchAlg.getDirectionBob().isEmpty()) {
+			searchAlg.search('G');
+		}
 		searchAlg.printSummary();
 	}
 
