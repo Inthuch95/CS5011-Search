@@ -127,7 +127,7 @@ public class InformedSearch extends Search {
 					}
 					if (oldNode.getPathCost() > nextStates.get(i).getPathCost()) {
 						frontier.remove(oldNode);
-						frontier.add(nextStates.get(i));
+						successors.add(nextStates.get(i));
 					}
 				}
 			}
@@ -321,8 +321,8 @@ public class InformedSearch extends Search {
 			heuristic =  "Manhattan distance";
 		} else if (heuristicType.equals("E")) {
 			heuristic =  "Euclidean distance";
-		} else if (heuristicType.equals("C")) {
-			heuristic =  "Chebyshev distance";
+		} else {
+			heuristic =  "Combination";
 		}
 		
 		return heuristic;
