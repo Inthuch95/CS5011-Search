@@ -48,6 +48,7 @@ public class InformedSearch extends Search {
 			currentNode = frontier.poll();
 			printStatus(goal, currentNode, explored);
 			explored.add(currentNode);
+			System.out.println("f(n): " + currentNode.getScore());
 			// check if the robot has reached the goal
 			if(currentNode.equals(this.getGoalNode())) {
 				// assign new initial state
