@@ -22,7 +22,6 @@ public class UninformedSearch extends Search {
 		ArrayList<Node> explored = this.getExplored();
 		Node startNode = this.getStartNode();
 		this.setGoalNode(goal);
-		System.out.println("Start node: " + startNode + "\n");
 		// BFS uses Deque to store frontier
 		frontier.add(startNode);
 		Node currentNode = startNode;

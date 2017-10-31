@@ -37,7 +37,6 @@ public class InformedSearch extends Search {
 		Node startNode = this.getStartNode();
 		startNode.setPathCost(0);
 		this.setGoalNode(goal);
-		System.out.println("Start node: " + startNode + "\n");
 		// BFS uses Deque to store frontier
 		frontier.add(startNode);
 		Node currentNode = startNode;
@@ -48,7 +47,6 @@ public class InformedSearch extends Search {
 			currentNode = frontier.poll();
 			printStatus(goal, currentNode, explored);
 			explored.add(currentNode);
-			System.out.println("f(n): " + currentNode.getScore());
 			// check if the robot has reached the goal
 			if(currentNode.equals(this.getGoalNode())) {
 				// assign new initial state
