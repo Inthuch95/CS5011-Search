@@ -1,8 +1,8 @@
 package search;
 
-public class Characters {
+public class CharactersNode {
 	private int bob, dog, cat, robot;
-	public Characters(int robot, int bob, int cat, int dog) {
+	public CharactersNode(int robot, int bob, int cat, int dog) {
 		this.robot = robot;
 		this.bob = bob;
 		this.cat = cat;
@@ -62,11 +62,11 @@ public class Characters {
 	@Override
 	public boolean equals(Object c1) {
 	    // this will be used to check if the state of the characters
-		if (!(c1 instanceof Characters)) {
+		if (!(c1 instanceof CharactersNode)) {
 	        return false;
 	    }
 
-		Characters c2 = (Characters) c1;
+		CharactersNode c2 = (CharactersNode) c1;
 
 	    // custom equality check here.
 	    return (this.robot == c2.robot) && (this.bob == c2.bob) && (this.cat == c2.cat) && 

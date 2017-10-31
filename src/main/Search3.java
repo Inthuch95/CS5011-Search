@@ -1,18 +1,19 @@
 package main;
 
 import map.Map;
-import search.Characters;
+import search.CharactersNode;
 import search.InformedSearch;
 import search.RescueOperation;
 
 public class Search3 {
 
 	public static void main(String[] args) {
-		char[][] map = Map.getChosenMap(args[1]);
-		int mapNumber = Integer.parseInt(args[1]);
-		String heuristicType = args[0];
+		// Use A* search with Manhattan distance in map 1
+		char[][] map = Map.getChosenMap("1");
+		int mapNumber = 1;
 		String algorithm = "A*";
-		System.out.println("Map " + args[1]);
+		String heuristicType = "M";
+		System.out.println("Map " + 1);
 		System.out.println("Algorithm: " + algorithm);
 		InformedSearch searchAlg = new InformedSearch(map, mapNumber, heuristicType, 
 				algorithm);
@@ -23,7 +24,7 @@ public class Search3 {
 		}
 		searchAlg.printSummary();
 		// initialize all characters at 'B'
-		Characters characters = new Characters(0, 0, 0, 0);
+		CharactersNode characters = new CharactersNode(0, 0, 0, 0);
 		RescueOperation ro = new RescueOperation(characters);
 		// search for a way to get everyone to safety (use BFS)
 		ro.getJourney();
