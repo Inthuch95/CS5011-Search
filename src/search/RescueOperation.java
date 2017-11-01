@@ -89,6 +89,7 @@ public class RescueOperation {
 		int catPos = characters.getCatPosition();
 		int dogPos = characters.getDogPosition();
 		int posChange;
+		// move to G if at position B. Other wise move to position B
 		if (robotPos == 1) {
 			posChange = -1;
 		} else {

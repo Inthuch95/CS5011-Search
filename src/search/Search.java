@@ -5,6 +5,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A class contains attributes and methods required in general search
+ *
+ */
 public class Search {
 	private Map<Node, Node> prev = new HashMap<Node, Node>();
 	private ArrayList<Node> directions = new ArrayList<Node>();

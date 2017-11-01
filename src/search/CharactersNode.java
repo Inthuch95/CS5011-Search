@@ -3,12 +3,14 @@ package search;
 public class CharactersNode {
 	private int bob, dog, cat, robot;
 	public CharactersNode(int robot, int bob, int cat, int dog) {
+		// a node contains position of robot, bob, cat, and dog
 		this.robot = robot;
 		this.bob = bob;
 		this.cat = cat;
 		this.dog = dog;
 	}
 	
+	// methods to get position of each character
 	public int getRobotPosition() {
 		return this.robot;
 	}
@@ -27,7 +29,7 @@ public class CharactersNode {
 	
 	@Override
 	public String toString() {
-		// print Node in the form: Node(row, column)
+		// print Nodes and their positions
 		String left = "Position B: ";
 		String right = "Position G: ";
 		String output;

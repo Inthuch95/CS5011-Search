@@ -1,6 +1,7 @@
 package map;
 
 public class Map {
+	// all maps from text file are stored in this class
 	public static char[][] map1 = new char [][] {
 		{'I', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'},
 		{'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'},
@@ -82,7 +83,7 @@ public class Map {
 		};
 		
 		public static char[][] getChosenMap(String mapChoice) {
-			// get the chosen map
+			// get the map based on command-line argument
 			int option = Integer.parseInt(mapChoice);
 			char[][] map = map1;
 			switch(option) {

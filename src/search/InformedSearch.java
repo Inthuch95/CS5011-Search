@@ -16,6 +16,7 @@ public class InformedSearch extends Search {
 		super(map, mapNumber);
 		this.heuristicType = heuristicType;
 		this.algorithm = algorithm;
+		// initialise priority queue. The priority is given to the node with lowest score (f(n))
 		frontier = new PriorityQueue<Node>(new Comparator<Node>() {
 			public int compare(Node n1, Node n2) {
 				if (n1.getScore() < n2.getScore()) {
@@ -37,7 +38,6 @@ public class InformedSearch extends Search {
 		Node startNode = this.getStartNode();
 		startNode.setPathCost(0);
 		this.setGoalNode(goal);
-		// BFS uses Deque to store frontier
 		frontier.add(startNode);
 		Node currentNode = startNode;
 		
@@ -93,6 +93,7 @@ public class InformedSearch extends Search {
 	}
 	
 	public ArrayList<Node> getDirectionBob() {
+		// return path to Bob
 		return this.directionBob;
 	}
 	
@@ -102,6 +103,7 @@ public class InformedSearch extends Search {
 		ArrayList<Node> nextStates = getNextStates(node);
 		ArrayList<Node> successors = new ArrayList<Node>();
 		for(int i = 0; i < nextStates.size(); i++) {
+			// add successor node if it is not in frontier or explored 
 			if (algorithm.equals("BestFS")) {
 				if (!explored.contains(nextStates.get(i)) &&
 						!frontier.contains(nextStates.get(i))) {

@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Map;
 
+/**
+ * This class can perform either BFS or DFS
+ *
+ */
 public class UninformedSearch extends Search {
 	private Deque<Node> frontier = new ArrayDeque<Node>();
 	private ArrayList<Node> directionBob = new ArrayList<Node>();
@@ -22,7 +26,7 @@ public class UninformedSearch extends Search {
 		ArrayList<Node> explored = this.getExplored();
 		Node startNode = this.getStartNode();
 		this.setGoalNode(goal);
-		// BFS uses Deque to store frontier
+		// BFS and DFS use Deque to store frontier
 		frontier.add(startNode);
 		Node currentNode = startNode;
 		printStatus(goal, currentNode, explored);
